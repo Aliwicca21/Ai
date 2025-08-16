@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+    <title>لوحة البيانات</title>
+      <link rel="stylesheet" href="style.css">
+      </head>
+      <body>
+        <div class="container">
+            <h2>مرحباً بك في الذكاء الاصطناعي!</h2>
+                <textarea id="userInput" placeholder="اسأل الذكاء الاصطناعي..."></textarea>
+                    <button id="sendBtn">إرسال</button>
+                        <div id="aiResponse">الرد سيظهر هنا...</div>
+                          </div>
+
+                            <script>
+                                const apiKey = "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"; // ⚠️ تجربة فقط
+
+                                    document.getElementById("sendBtn").addEventListener("click", async () => {
+                                          const prompt = document.getElementById("userInput").value;
+                                                const responseDiv = document.getElementById("aiResponse");
+
+                                                      responseDiv.textContent = "جارٍ المعالجة...";
+
+                                                            try {
+                                                                    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                                                                              method: "POST",
+                                                                                        headers: {
+                                                                                                    "Content-Type": "application/json",
+                                                                                                                "Authorization": `Bearer ${apiKey}`
+                                                                                                                          },
+                                                                                                                                    body: JSON.stringify({
+                                                                                                                                                model: "gpt-3.5-turbo",
+                                                                                                                                                            messages: [{ role: "user", content: prompt }]
+                                                                                                                                                                      })
+                                                                                                                                                                              });
+
+                                                                                                                                                                                      const data = await response.json();
+                                                                                                                                                                                              const aiText = data.choices[0].message.content;
+                                                                                                                                                                                                      responseDiv.textContent = aiText;
+                                                                                                                                                                                                            } catch (err) {
+                                                                                                                                                                                                                    responseDiv.textContent = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي.";
+                                                                                                                                                                                                                          }
+                                                                                                                                                                                                                              });
+                                                                                                                                                                                                                                </script>
+                                                                                                                                                                                                                                </body>
+                                                                                                                                                                                                                                </html>
