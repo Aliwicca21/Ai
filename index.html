@@ -1,47 +1,53 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-    <title>لوحة البيانات</title>
-      <link rel="stylesheet" href="style.css">
-      </head>
-      <body>
-        <div class="container">
-            <h2>مرحباً بك في الذكاء الاصطناعي!</h2>
-                <textarea id="userInput" placeholder="اسأل الذكاء الاصطناعي..."></textarea>
-                    <button id="sendBtn">إرسال</button>
-                        <div id="aiResponse">الرد سيظهر هنا...</div>
-                          </div>
+  <meta charset="UTF-8" />
+  <title>لوحة الذكاء الاصطناعي</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>اسأل الذكاء الاصطناعي</h2>
+    <textarea id="userInput" placeholder="اكتب سؤالك هنا..."></textarea>
+    <button id="sendBtn">إرسال</button>
+    <div id="aiResponse">الرد سيظهر هنا...</div>
+  </div>
 
-                            <script>
-                                const apiKey = "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"; // ⚠️ تجربة فقط
+  <script>
+    const apiKey = "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"; // لا تتركه مكشوفًا في الإنتاج
 
-                                    document.getElementById("sendBtn").addEventListener("click", async () => {
-                                          const prompt = document.getElementById("userInput").value;
-                                                const responseDiv = document.getElementById("aiResponse");
+    document.getElementById("sendBtn").addEventListener("click", async () => {
+      const prompt = document.getElementById("userInput").value;
+      const responseDiv = document.getElementById("aiResponse");
 
-                                                      responseDiv.textContent = "جارٍ المعالجة...";
+      responseDiv.textContent = "جارٍ المعالجة...";
 
-                                                            try {
-                                                                    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                                                                              method: "POST",
-                                                                                        headers: {
-                                                                                                    "Content-Type": "application/json",
-                                                                                                                "Authorization": `Bearer ${apiKey}`
-                                                                                                                          },
-                                                                                                                                    body: JSON.stringify({
-                                                                                                                                                model: "gpt-3.5-turbo",
-                                                                                                                                                            messages: [{ role: "user", content: prompt }]
-                                                                                                                                                                      })
-                                                                                                                                                                              });
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.7
+          })
+        });
 
-                                                                                                                                                                                      const data = await response.json();
-                                                                                                                                                                                              const aiText = data.choices[0].message.content;
-                                                                                                                                                                                                      responseDiv.textContent = aiText;
-                                                                                                                                                                                                            } catch (err) {
-                                                                                                                                                                                                                    responseDiv.textContent = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي.";
-                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                              });
-                                                                                                                                                                                                                                </script>
-                                                                                                                                                                                                                                </body>
-                                                                                                                                                                                                                                </html>
+        const data = await response.json();
+
+        if (data.error) {
+          responseDiv.textContent = "❌ خطأ من OpenAI: " + data.error.message;
+        } else {
+          const reply = data.choices[0].message.content;
+          responseDiv.textContent = "🤖 الرد: " + reply;
+        }
+      } catch (err) {
+        responseDiv.textContent = "⚠️ فشل الاتصال بـ OpenAI API.";
+      }
+    });
+  </script>
+</body>
+</html>
